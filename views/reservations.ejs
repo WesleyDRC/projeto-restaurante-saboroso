@@ -1,31 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-
-<%- include('./includeViews/head.ejs') -%>
-
-	<body>
-
-		<div class="gtco-loader"></div>
-
-		<div id="page">
-
-			<%- include('./includeViews/header-menu.ejs')-%>
-
-				<%- include('./includeViews/header.ejs')-%>
-
-				<%- include('./includeViews/content/reservations.ejs') %>
-
-				<%- include('./includeViews/footer.ejs') -%>
-
-		</div>
-
-
-
-	<%- include('./includeViews/goToTop.ejs') -%>
-
-	<%- include('./includeViews/scripts.ejs') -%>
-
-
-	</body>
-
-</html>
+<%- include('./includeViews/page-header.ejs') -%>
+<%- include('./includeViews/content/reservations.ejs') %>
+<%- include('./includeViews/page-footer.ejs') -%>

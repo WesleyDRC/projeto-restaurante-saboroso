@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <%- include('./head.ejs') -%>
+
+  <body>
+    <div class="gtco-loader"></div>
+
+    <div id="page">
+
+      <%- include('./header-menu.ejs') -%>
+
+			<% if(typeof isHome === "boolean" && isHome) { %>
+				<%- include('./header-index.ejs') -%>
+			<% } else { %>
+				<%- include('./header.ejs') -%>
+			<% } %>

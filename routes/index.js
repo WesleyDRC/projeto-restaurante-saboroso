@@ -11,7 +11,8 @@ router.get('/', function (req, res, next) {
     res.render('index',
     {
       title: 'Restaurante Saboroso!',
-      menus: results
+      menus: results,
+      isHome: true
     });
 
   }).catch(error => {
@@ -40,7 +41,6 @@ router.get('/menus', function (req, res, next) {
   }).catch(error => {
     console.log(error)
   })
-
 
 })
 
