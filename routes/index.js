@@ -1,24 +1,23 @@
-var connection = require("../includes/db")
+var connection = require("../includes/db");
+var menus = require('../includes/menus.js')
 var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
 
-  connection.query(
-    "SELECT * FROM TB_MENUS ORDER BY TITLE", (err, results) => {
-      if (err) {
-        console.log(err)
-      }
+  menus.getMenus().then((results) => {
 
-      res.render('index',
-        {
-          title: 'Restaurante Saboroso!',
-          menus: results
-        });
+    res.render('index',
+    {
+      title: 'Restaurante Saboroso!',
+      menus: results
+    });
 
-    }
-  )
+  }).catch(error => {
+    console.log(error)
+  })
+
 });
 
 router.get('/contacts', function (req, res, next) {
@@ -30,11 +29,19 @@ router.get('/contacts', function (req, res, next) {
 })
 
 router.get('/menus', function (req, res, next) {
-  res.render('menus', {
-    title: 'Menus - Restaurante Saboroso!',
-    backgroundHeader: 'images/img_bg_1.jpg',
-    h1: 'Saboreie nosso menu!'
+
+  menus.getMenus().then((results)=> {
+    res.render('menus', {
+      title: 'Menus - Restaurante Saboroso!',
+      backgroundHeader: 'images/img_bg_1.jpg',
+      h1: 'Saboreie nosso menu!',
+      menus: results
+    })
+  }).catch(error => {
+    console.log(error)
   })
+
+
 })
 
 router.get('/reservations', function (req, res, next) {
