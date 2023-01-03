@@ -4,17 +4,9 @@
       <div class="col-md-12">
         <div class="col-md-6 animate-box">
           <h3>Entre em Contato</h3>
-					<% if(typeof error === "string") { %>
-						<div class="alert alert-danger">
-							<%= error %>
-						</div>
-					<% } %>
 
-					<% if(typeof success === "string") { %>
-								<div class="alert alert-success">
-									<%= success %>
-								</div>
-					<% } %>
+          <%- include('alerts') -%>
+
           <form method="post" action="/contacts">
             <div class="row form-group">
               <div class="col-md-12">

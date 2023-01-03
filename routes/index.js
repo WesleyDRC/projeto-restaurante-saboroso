@@ -22,11 +22,7 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/contacts", function (req, res, next) {
-  res.render("contacts", {
-    title: "Contatos - Restaurante Saboroso!",
-    backgroundHeader: "images/img_bg_3.jpg",
-    h1: "Diga um oi!",
-  });
+  contacts.render(req, res)
 });
 
 router.post("/contacts", function (req, res, next) {
