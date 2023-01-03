@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 var admin = require('../includes/admin')
+var menus = require('../includes/menus')
 
 var adminUsers = require('../includes/adminUsers')
 
@@ -27,7 +28,15 @@ router.get('/logout', (req, res, next) => {
 
 /* GET home page admin. */
 router.get('/', (req, res, next) => {
-	res.render('admin/index', admin.getParams(req))
+
+	admin.dashboard().then((data) => {
+		res.render('admin/index', admin.getParams(req, {
+			data
+		}))
+	}).catch((error) => {
+		console.log(error)
+	})
+
 })
 
 router.get('/login', (req, res, next) => {
@@ -62,7 +71,16 @@ router.get('/emails', (req, res, next) => {
 })
 
 router.get('/menus', (req, res, next) => {
-	res.render('admin/menus', admin.getParams(req))
+
+	menus.getMenus().then((dataMenus) => {
+		res.render('admin/menus', admin.getParams(req, {
+			dataMenus
+		}))
+	}).catch((error) => {
+		console.log(error)
+	})
+
+
 })
 
 router.get('/reservations', (req, res, next) => {
