@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const session = require("express-session")
+let RedisStore = require("connect-redis")(session)
+
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/admin');
 
@@ -12,6 +15,16 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(session({
+  store: new RedisStore({
+    host: 'localhost',
+    port: 6379
+  }),
+  secret: 'p@ssw0rd',
+  resave: true, // Casso a sessão expirar, ele cria uma nova.
+  saveUninitialized: true
+}))
 
 app.use(logger('dev'));
 app.use(express.json());
