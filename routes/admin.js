@@ -80,7 +80,22 @@ router.get('/menus', (req, res, next) => {
 		console.log(error)
 	})
 
+})
 
+router.post('/menus', (req, res, next)=> {
+	menus.save(req.fields, req.files).then((results) => {
+		res.send(results)
+	}).catch((error) => {
+		console.log(error)
+	})
+})
+
+router.delete('/menus/:id', (req, res, next) => {
+	menus.delete(req.params.id).then(response => {
+		res.send(response)
+	}).catch((error) => {
+		res.send(error)
+	})
 })
 
 router.get('/reservations', (req, res, next) => {
