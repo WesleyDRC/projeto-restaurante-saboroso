@@ -1,7 +1,10 @@
 var connection = require("../includes/db");
+
 var menus = require("../includes/menus");
 var reservations = require("../includes/reservations")
 var contacts = require('../includes/contacts')
+var emails = require('../includes/emails')
+
 var express = require("express");
 var router = express.Router();
 
@@ -98,5 +101,15 @@ router.get("/services", function (req, res, next) {
     h1: "É um prazer poder servir!",
   });
 });
+
+router.post('/subscribe', function (req, res, next) {
+
+  emails.save(req).then((results) => {
+		res.send(results)
+	}).catch((error) => {
+		res.send(error)
+	})
+
+})
 
 module.exports = router;

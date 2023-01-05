@@ -96,6 +96,7 @@ class HcodeGrid {
 
     this.activateEvent('afterUpdateClick', [e])
   }
+  
   btnDeleteClick(e) {
     let dataSet = this.getTrData(e)
 

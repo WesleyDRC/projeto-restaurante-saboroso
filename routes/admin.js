@@ -7,6 +7,7 @@ moment.locale('pt-BR')
 var admin = require('../includes/admin')
 var menus = require('../includes/menus')
 var reservations = require('../includes/reservations')
+var emails = require('../includes/emails')
 
 var adminUsers = require('../includes/adminUsers');
 var contacts = require("../includes/contacts");
@@ -86,7 +87,19 @@ router.delete('/contacts/:id', (req, res, next) => {
 })
 
 router.get('/emails', (req, res, next) => {
-	res.render('admin/emails', admin.getParams(req))
+	emails.getEmails().then((data) => {
+		res.render('admin/emails', admin.getParams(req, {
+			data
+		}))
+	})
+})
+
+router.delete('/emails/:id', (req, res, next) => {
+	emails.delete(req.params.id).then(response => {
+		res.send(response)
+	}).catch((error) => {
+		res.send(error)
+	})
 })
 
 router.get('/menus', (req, res, next) => {
