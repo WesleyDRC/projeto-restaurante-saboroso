@@ -8,7 +8,8 @@ var admin = require('../includes/admin')
 var menus = require('../includes/menus')
 var reservations = require('../includes/reservations')
 
-var adminUsers = require('../includes/adminUsers')
+var adminUsers = require('../includes/adminUsers');
+const { response } = require("express");
 
 router.use((req, res, next) => {
 	if(['/login'].indexOf(req.url) === -1 && !req.session.user) {
@@ -133,7 +134,37 @@ router.delete('/reservations/:id', (req, res, next) => {
 })
 
 router.get('/users', (req, res, next) => {
-	res.render('admin/users', admin.getParams(req))
+
+	adminUsers.getUsers().then(data => {
+		res.render('admin/users', admin.getParams(req, {
+			data
+		}))
+	})
 })
 
+router.post('/users', (req, res, next) => {
+	adminUsers.save(req.fields).then(response=> {
+		res.send(response)
+	}).catch((error) => {
+		res.send(error)
+	})
+})
+
+router.post('/users/password-change', (req,res,next) => {
+	adminUsers.changePassword(req).then(response=> {
+		res.send(response)
+	}).catch((err) => {
+		res.send({
+			error: err
+		})
+	})
+})
+
+router.delete('/users/:id', (req, res, next) => {
+	adminUsers.delete(req.params.id).then(response=> {
+		res.send(response)
+	}).catch((error) => {
+		res.send(error)
+	})
+})
 module.exports = router;

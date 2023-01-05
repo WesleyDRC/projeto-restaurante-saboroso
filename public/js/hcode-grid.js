@@ -26,9 +26,15 @@ class HcodeGrid {
 		this.options = Object.assign({}, {
 			formCreate: "#modal-create form",
 			formUpdate: "#modal-update form",
-			btnUpdate: ".btn-update",
-			btnDelete: ".btn-delete",
+			btnUpdate: "btn-update",
+			btnDelete: "btn-delete",
+      onUpdateLoad: (form, name, dataSet) => {
+        let input = form.querySelector('[name='+name+']')
+        if(input) input.value = dataSet[name]
+      }
 		}, configs)
+
+    this.rows = [...document.querySelectorAll('table tbody tr')]
 
 		this.initForms()
 
@@ -39,24 +45,26 @@ class HcodeGrid {
     this.formCreate = document.querySelector(this.options.formCreate);
 
     this.formCreate
-      .save()
-      .then((data) => {
-        this.activateEvent('afterFormCreate')
+      .save({
+        success: () => {
+          this.activateEvent('afterFormCreate')
+        },
+        failure: () => {
+          this.activateEvent('afterFormCreateError')
+        }
       })
-      .catch((error) => {
-        this.activateEvent('afterFormCreateError')
-      });
 
     this.formUpdate = document.querySelector(this.options.formUpdate);
 
     this.formUpdate
-      .save()
-      .then((data) => {
-        this.activateEvent('afterFormUpdate')
+      .save({
+        success: () => {
+          this.activateEvent('afterFormUpdate')
+        },
+        failure: () => {
+          this.activateEvent('afterFormUpdateError')
+        }
       })
-      .catch((error) => {
-        this.activateEvent('afterFormUpdateError')
-      });
 	}
 
   activateEvent(name, args) {
@@ -71,40 +79,47 @@ class HcodeGrid {
     return JSON.parse(tr.dataset.row);
   }
 
+  btnUpdateClick(e) {
+    this.activateEvent('beforeUpdateClick', [e])
+
+    let dataSet = this.getTrData(e)
+
+    for (let name in dataSet) {
+
+      this.options.onUpdateLoad(this.formUpdate, name, dataSet)
+
+    }
+
+    this.activateEvent('afterUpdateClick', [e])
+  }
+  btnDeleteClick(e) {
+    let dataSet = this.getTrData(e)
+
+    if (confirm(eval('`' + this.options.deleteMsg + '`')))
+      fetch(eval('`' +this.options.deleteUrl + '`'), {
+        method: "DELETE",
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          this.activateEvent("afterDeleteClick")
+        });
+  }
+
 	initButtons() {
-    [...document.querySelectorAll(this.options.btnUpdate)].forEach((btn) => {
-      btn.addEventListener("click", (e) => {
 
-				this.activateEvent('beforeUpdateClick', [e])
-
-        let dataSet = this.getTrData(e)
-
-        for (let name in dataSet) {
-
-          this.options.onUpdateLoad(this.formUpdate, name, dataSet)
-
-        }
-
-        this.activateEvent('afterUpdateClick', [e])
-      });
+    this.rows.forEach((row) => {
+      [...row.querySelectorAll(".btn")].forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          if(e.target.classList.contains(this.options.btnUpdate)) {
+            this.btnUpdateClick(e)
+          } else if (e.target.classList.contains(this.options.btnDelete)) {
+            this.btnDeleteClick(e)
+          } else {
+            this.activateEvent('buttonClick', [e.target, this.getTrData(e), e])
+          }
+        })
+      })
     });
 
-    [...document.querySelectorAll(this.options.btnDelete)].forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-
-        let dataSet = this.getTrData(e)
-
-        if (confirm(eval('`' + this.options.deleteMsg + '`')))
-          fetch(eval('`' +this.options.deleteUrl + '`'), {
-            method: "DELETE",
-          })
-            .then((resp) => resp.json())
-            .then((data) => {
-              this.activateEvent("afterDeleteClick")
-            });
-      });
-    });
 	}
-
-
 }

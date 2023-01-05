@@ -20,8 +20,6 @@ module.exports = {
 	save(fields, files) {
 		return new Promise((resolve, reject) => {
 
-			console.log("filesphoto: ", files.photo)
-
 			fields.photo = `images/${path.parse(files.photo.filepath).base}`
 
 			let query, queryPhoto = '', params = [
