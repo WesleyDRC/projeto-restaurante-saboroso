@@ -64,17 +64,21 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1.</td>
-                  <td>Hcode</td>
-                  <td>contato@hcode.com.br</td>
-                  <td>2</td>
-                  <td>1/1/2019</td>
-                  <td>10:30</td>
-                  <td><button type="button" class="btn btn-xs btn-info btn-update" data-toggle="modal" data-target="#modal-update"><i
-                        class="fa fa-pencil"></i> Editar</button>&nbsp;<button type="button" class="btn btn-xs btn-danger btn-delete"><i
-                        class="fa fa-trash"></i> Excluir</button></td>
-                </tr>
+
+                <% data.forEach((item) => { %>
+                  <tr data-row="<%= JSON.stringify(item) %>">
+                    <td><%= item.id %></td>
+                    <td><%= item.name %></td>
+                    <td><%= item.email %></td>
+                    <td><%= item.people %></td>
+                    <td><%= moment(item.date).format("DD [de] MMMM [de] YYYY ") %></td>
+                    <td><%= item.time %></td>
+                    <td><button type="button" class="btn btn-xs btn-info btn-update"><i
+                          class="fa fa-pencil"></i> Editar</button>&nbsp;<button type="button" class="btn btn-xs btn-danger btn-delete"><i
+                          class="fa fa-trash"></i> Excluir</button></td>
+                  </tr>
+                <% })%>
+
               </tbody>
             </table>
           </div>
@@ -198,3 +202,15 @@
     </div>
 
 <%- include('./includeViews/footer')-%>
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/plugin-formsave.js"></script>
+<script src="/js/hcode-grid.js"></script>
+<script>
+
+new HcodeGrid({
+  deleteUrl: "/admin/reservations/${dataSet.id}",
+  deleteMsg: "Deseja realmente excluir a reserva de ${dataSet.name}?",
+})
+
+</script>

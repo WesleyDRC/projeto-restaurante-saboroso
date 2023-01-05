@@ -1,8 +1,12 @@
 var express = require("express");
 var router = express.Router();
 
+var moment = require('moment')
+moment.locale('pt-BR')
+
 var admin = require('../includes/admin')
 var menus = require('../includes/menus')
+var reservations = require('../includes/reservations')
 
 var adminUsers = require('../includes/adminUsers')
 
@@ -99,9 +103,33 @@ router.delete('/menus/:id', (req, res, next) => {
 })
 
 router.get('/reservations', (req, res, next) => {
-	res.render('admin/reservations', admin.getParams(req, {
-		date: {}
-	}))
+
+	reservations.getReservations().then(data => {
+		res.render('admin/reservations', admin.getParams(req, {
+			date: {},
+			data,
+			moment
+		}))
+	}).catch(error => {
+		console.log(error)
+	})
+
+})
+
+router.post('/reservations', (req, res, next)=> {
+	reservations.save(req.fields, req.files).then((results) => {
+		res.send(results)
+	}).catch((error) => {
+		console.log(error)
+	})
+})
+
+router.delete('/reservations/:id', (req, res, next) => {
+	reservations.delete(req.params.id).then(response => {
+		res.send(response)
+	}).catch((error) => {
+		res.send(error)
+	})
 })
 
 router.get('/users', (req, res, next) => {
