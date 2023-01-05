@@ -9,7 +9,7 @@ var menus = require('../includes/menus')
 var reservations = require('../includes/reservations')
 
 var adminUsers = require('../includes/adminUsers');
-const { response } = require("express");
+var contacts = require("../includes/contacts");
 
 router.use((req, res, next) => {
 	if(['/login'].indexOf(req.url) === -1 && !req.session.user) {
@@ -68,7 +68,21 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/contacts', (req, res, next) => {
-	res.render('admin/contacts', admin.getParams(req))
+	contacts.getContacts().then((data) => {
+		res.render('admin/contacts', admin.getParams(req, {
+			data
+		}))
+	}).catch((error) => {
+		res.send(error)
+	})
+})
+
+router.delete('/contacts/:id', (req, res, next) => {
+	contacts.delete(req.params.id).then((results) => {
+		res.send(results)
+	}).catch((error) => {
+		res.send(error)
+	})
 })
 
 router.get('/emails', (req, res, next) => {
