@@ -143,73 +143,26 @@
 
 <script src="/js/plugin-filereader.js"></script>
 <script src="/js/plugin-formsave.js"></script>
-
+<script src="/js/hcode-grid.js"></script>
 
 <script>
 
 new PluginFileReader("#modal-create [type=file]", "#modal-create img")
 new PluginFileReader("#modal-update [type=file]", "#modal-update img")
 
-let formCreate = document.querySelector("#modal-create form");
-
-formCreate.save().then((data) => {
-  window.location.reload()
-}).catch((error) => {
-  console.log(error)
-});
-
-let formUpdate = document.querySelector("#modal-update form");
-
-formUpdate.save().then((data) => {
-  window.location.reload()
-}).catch((error) => {
-  console.log(error)
-});
-
-[...document.querySelectorAll('.btn-update')].forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-
-    let tr = e.path.find(el => {
-      return (el.tagName.toUpperCase() === "TR")
-    })
-
-    let dataSet = JSON.parse(tr.dataset.row)
-
-    for (let name in dataSet) {
-
-      switch(name) {
-        case 'photo':
-          formUpdate.querySelector("img").src = "/"+dataSet[name]
-        break;
-        default:
-          let input = formUpdate.querySelector(`[name=${name}]`)
-          if(input) input.value = dataSet[name]
-      }
-
+new HcodeGrid({
+  deleteUrl: "/admin/menus/${dataSet.id}",
+  deleteMsg: "Deseja realmente excluir o menu ${dataSet.title}?",
+  onUpdateLoad: (form, name, dataSet) => {
+    let input = form.querySelector(`[name=${name}]`);
+    switch (name) {
+      case 'photo':
+        form.querySelector("img").src = "/"+dataSet[name]
+      break;
+      default:
+        if (input) input.value = dataSet[name];
     }
-
-    $('#modal-update').modal('show')
-  })
+  }
 });
 
-[...document.querySelectorAll('.btn-delete')].forEach(( btn) => {
-  btn.addEventListener('click', (e) => {
-
-    let tr = e.path.find(el => {
-      return (el.tagName.toUpperCase() === "TR")
-    })
-
-    let dataSet = JSON.parse(tr.dataset.row)
-
-    if(confirm(`Deseja realmente excluir o menu ${dataSet.title}?`))
-
-    fetch(`/admin/menus/${dataSet.id}`, {
-      method: "DELETE"
-    })
-      .then((resp) => resp.json())
-      .then(data => {
-        window.location.reload()
-      })
-  })
-})
 </script>

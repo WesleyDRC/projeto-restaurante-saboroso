@@ -211,6 +211,17 @@
 new HcodeGrid({
   deleteUrl: "/admin/reservations/${dataSet.id}",
   deleteMsg: "Deseja realmente excluir a reserva de ${dataSet.name}?",
+  onUpdateLoad: (form, name, dataSet) => {
+    let input = form.querySelector(`[name=${name}]`);
+    switch (name) {
+      case "date":
+        if (input)
+          input.value = moment(dataSet[name]).format("YYYY-MM-DD");
+        break;
+      default:
+        if (input) input.value = dataSet[name];
+    }
+  }
 })
 
 </script>
