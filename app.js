@@ -1,6 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
+
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var formidable = require('formidable');
@@ -8,10 +8,23 @@ var formidable = require('formidable');
 const session = require("express-session")
 let RedisStore = require("connect-redis")(session)
 
-var indexRouter = require('./routes/index');
-var adminRouter = require('./routes/admin');
+var http = require('http');
+var socket = require('socket.io');
+var path = require('path');
 
 var app = express();
+
+var http = http.Server(app)
+var io = socket(http);
+
+
+// quando tiver uma nova conexão no socket, ele vai receber qual foi o socket que se conectou
+io.on('connection', function (socket) {
+  console.log("Novo usuário conectado!");
+})
+
+var indexRouter = require('./routes/index')(io);
+var adminRouter = require('./routes/admin')(io);
 
 app.use(function(req,res,next) {
 
@@ -75,4 +88,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+http.listen(3000, () => {
+  console.log("Servidor em execução na porta 3000!")
+})

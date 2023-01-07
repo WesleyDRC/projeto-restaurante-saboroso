@@ -27,7 +27,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Reservas</span>
-            <span class="info-box-number"><%= data.totalReservations %></span>
+            <span class="info-box-number" id="totalReservations"><%= data.totalReservations %></span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -46,7 +46,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Contatos</span>
-            <span class="info-box-number"><%= data.totalContacts %></span>
+            <span class="info-box-number" id="totalContacts"><%= data.totalContacts %></span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -69,7 +69,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Menu</span>
-            <span class="info-box-number"><%= data.totalMenus %></span>
+            <span class="info-box-number" id="totalMenus"><%= data.totalMenus %></span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -88,7 +88,7 @@
 
           <div class="info-box-content">
             <span class="info-box-text">Usuários</span>
-            <span class="info-box-number"><%= data.totalUsers %></span>
+            <span class="info-box-number" id="totalUsers"><%= data.totalUsers %></span>
           </div>
           <!-- /.info-box-content -->
         </div>
@@ -102,3 +102,25 @@
 <!-- /.content-wrapper -->
 
 <%- include('./includeViews/footer')-%>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+  function refreshDashboard() {
+    fetch('/admin/dashboard')
+    .then(resp => resp.json())
+    .then(json => {
+      document.querySelector("#totalReservations").innerHTML = json.totalReservations
+      document.querySelector("#totalContacts").innerHTML = json.totalContacts
+      document.querySelector("#totalMenus").innerHTML = json.totalMenus
+      document.querySelector("#totalUsers").innerHTML = json.totalUsers
+    })
+
+  }
+
+  let socket = io();
+
+  socket.on("dashboard update", () => {
+    refreshDashboard()
+  })
+</script>

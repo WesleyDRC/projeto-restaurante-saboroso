@@ -8,108 +8,118 @@ var emails = require('../includes/emails')
 var express = require("express");
 var router = express.Router();
 
-/* GET home page. */
-router.get("/", function (req, res, next) {
-  menus
-    .getMenus()
-    .then((results) => {
-      res.render("index", {
-        title: "Restaurante Saboroso!",
-        menus: results,
-        isHome: true,
+
+
+module.exports = function(io) {
+
+    /* GET home page. */
+  router.get("/", function (req, res, next) {
+    menus
+      .getMenus()
+      .then((results) => {
+        res.render("index", {
+          title: "Restaurante Saboroso!",
+          menus: results,
+          isHome: true,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-});
-
-router.get("/contacts", function (req, res, next) {
-  contacts.render(req, res)
-});
-
-router.post("/contacts", function (req, res, next) {
-
-  if(!req.body.name) {
-    contacts.render(req, res, "Insira o seu nome!")
-  } else if(!req.body.email) {
-    contacts.render(req, res, "Insira o seu email!")
-  } else if (!req.body.message) {
-    contacts.render(req, res, "Insira a sua mensagem!")
-  } else {
-    contacts.save(req.body).then(() => {
-      req.body = {}
-      contacts.render(req, res, null, "Sua mensagem foi enviada com sucesso, em breve retornaremos.")
-    }).catch((error) => {
-      contacts.render(req, res, error.message)
-    })
-  }
-})
-
-router.get("/menus", function (req, res, next) {
-  menus
-    .getMenus()
-    .then((results) => {
-      res.render("menus", {
-        title: "Menus - Restaurante Saboroso!",
-        backgroundHeader: "images/img_bg_1.jpg",
-        h1: "Saboreie nosso menu!",
-        menus: results,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-});
-
-router.get("/reservations", function (req, res, next) {
-
-  reservations.render(req, res);
-
-});
-
-router.post("/reservations", function (req, res, next) {
-
-  if (!req.body.name) {
-    reservations.render(req, res, "Preêncha o campo nome!");
-  } else if (!req.body.email) {
-    reservations.render(req, res, "Preêncha o campo email!");
-  } else if (!req.body.people) {
-    reservations.render(req, res, "Preêncha o campo pessoas!");
-  } else if (!req.body.date) {
-    reservations.render(req, res,"Preêncha o campo data!");
-  } else if (!req.body.time) {
-    reservations.render(req, res, "Preêncha o campo hora!");
-  } else {
-    reservations.save(req.body).then(() => {
-
-      req.body = {};
-      reservations.render(req, res, null, "Reserva realizada com sucesso!");
-
-
-    }).catch((error) => {
-      reservations.render(req, res, error.message)
-    })
-  }
-
-});
-
-router.get("/services", function (req, res, next) {
-  res.render("services", {
-    title: "Serviços - Restaurante Saboroso!",
-    backgroundHeader: "images/img_bg_1.jpg",
-    h1: "É um prazer poder servir!",
   });
-});
 
-router.post('/subscribe', function (req, res, next) {
+  router.get("/contacts", function (req, res, next) {
+    contacts.render(req, res)
+  });
 
-  emails.save(req).then((results) => {
-		res.send(results)
-	}).catch((error) => {
-		res.send(error)
-	})
+  router.post("/contacts", function (req, res, next) {
 
-})
+    if(!req.body.name) {
+      contacts.render(req, res, "Insira o seu nome!")
+    } else if(!req.body.email) {
+      contacts.render(req, res, "Insira o seu email!")
+    } else if (!req.body.message) {
+      contacts.render(req, res, "Insira a sua mensagem!")
+    } else {
+      contacts.save(req.body).then(() => {
+        req.body = {}
 
-module.exports = router;
+        io.emit("dashboard update")
+
+        contacts.render(req, res, null, "Sua mensagem foi enviada com sucesso, em breve retornaremos.")
+      }).catch((error) => {
+        contacts.render(req, res, error.message)
+      })
+    }
+  })
+
+  router.get("/menus", function (req, res, next) {
+    menus
+      .getMenus()
+      .then((results) => {
+        res.render("menus", {
+          title: "Menus - Restaurante Saboroso!",
+          backgroundHeader: "images/img_bg_1.jpg",
+          h1: "Saboreie nosso menu!",
+          menus: results,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+
+  router.get("/reservations", function (req, res, next) {
+
+    reservations.render(req, res);
+
+  });
+
+  router.post("/reservations", function (req, res, next) {
+
+    if (!req.body.name) {
+      reservations.render(req, res, "Preêncha o campo nome!");
+    } else if (!req.body.email) {
+      reservations.render(req, res, "Preêncha o campo email!");
+    } else if (!req.body.people) {
+      reservations.render(req, res, "Preêncha o campo pessoas!");
+    } else if (!req.body.date) {
+      reservations.render(req, res,"Preêncha o campo data!");
+    } else if (!req.body.time) {
+      reservations.render(req, res, "Preêncha o campo hora!");
+    } else {
+      reservations.save(req.body).then(() => {
+
+        req.body = {};
+
+        io.emit("dashboard update")
+        
+        reservations.render(req, res, null, "Reserva realizada com sucesso!");
+
+      }).catch((error) => {
+        reservations.render(req, res, error.message)
+      })
+    }
+
+  });
+
+  router.get("/services", function (req, res, next) {
+    res.render("services", {
+      title: "Serviços - Restaurante Saboroso!",
+      backgroundHeader: "images/img_bg_1.jpg",
+      h1: "É um prazer poder servir!",
+    });
+  });
+
+  router.post('/subscribe', function (req, res, next) {
+
+    emails.save(req).then((results) => {
+      res.send(results)
+    }).catch((error) => {
+      res.send(error)
+    })
+
+  })
+
+  return router;
+};
